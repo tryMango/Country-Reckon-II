@@ -212,13 +212,15 @@ def start_menu():
         }
 
         latest_session_data = Sessions.query.filter_by(user_id=current_user.id).order_by(Sessions.id.desc()).first()
-        username_id = current_user.username + " ID:" + str(current_user.id)
+        username = current_user.username
+        user_id = current_user.id
         return render_template('start-menu.html',
                                latest_session_data=latest_session_data,
                                settings_data=settings_data,
                                max_rounds_amount=max_rounds_amount,
                                max_guesses_amount=max_guesses_amount,
-                               username_id=username_id)
+                               username=username,
+                               user_id=user_id)
 
 
 @app.route('/game/<int:session_id>/round', methods=['GET', 'POST'])
@@ -316,8 +318,9 @@ def page_not_found(e):
 def settings():
     if request.method == 'POST':
         try:
-            db.session.commit()
             current_user.volume = int(request.form.get('volume-range'))
+            db.session.commit()
+            return redirect(f'/settings')
         except Exception as e:
             print(e)
             return e
