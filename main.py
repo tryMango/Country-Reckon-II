@@ -365,7 +365,7 @@ def top_players():
     total_rounds = []
     ids = []
 
-    for user in Users.query.order_by(Users.total_score.desc()).all():
+    for user in Users.query.order_by(Users.total_score.desc()).limit(100).all():
         ids.append(user.id)
         usernames.append(user.username)
         if user.total_rounds_played != 0:

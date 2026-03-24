@@ -19,17 +19,6 @@
             <td>Average Score</td>
             <td>Rounds Played</td>
         </tr>
-        {% if usernames | length > 100 %}
-        <tr></tr>
-        {% for i in range(100) %}
-        <tr>
-            <td>{{i+1}}</td>
-            <td><a href="/user/{{ids[i]}}">{{usernames[i]}}</a></td>
-            <td>{{total_scores[i]}}</td>
-            <td></td>
-        </tr>
-        {% endfor %}
-        {% else %}
         {% for i in range(usernames|length) %}
         {% if i < 1 %}
         <tr id="playerNumberOne">
@@ -44,7 +33,6 @@
             <td>{{total_rounds[i]}}</td>
         </tr>
         {% endfor %}
-        {% endif %}
     </table>
 </div>
 </body>
