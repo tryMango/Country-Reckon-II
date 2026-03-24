@@ -1,10 +1,9 @@
 import json
 import random
-
 import requests
 from flask import Flask, render_template, request, redirect, flash
-from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
-from sqlalchemy.testing.pickleable import User
+from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required, \
+    AnonymousUserMixin
 from sqlalchemy.util import NoneType
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
@@ -303,7 +302,8 @@ def session_summary(session_id):
                                session_data=session_data,
                                username=username)
     else:
-        return render_template('no-user-exist.html', text_message = "No such session exists", title= "No session")
+        return render_template('no-user-exist.html', text_message="No such session exists", title="No session")
+
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -409,12 +409,17 @@ def user_profile(user_id):
                         id=user_id).first().total_rounds_played, 2),
                 'profile_code': Users.query.filter_by(id=user_id).first().profile_image
             }
-            return render_template('profile.html',
-                                   user_info=user_info,
-                                   current_user_id=current_user.id)
+            if AnonymousUserMixin:
+                return render_template('profile.html',
+                                       user_info=user_info,
+                                       current_user_id=0)
+            else:
+                return render_template('profile.html',
+                                       user_info=user_info,
+                                       current_user_id=current_user.id)
         except Exception as e:
             print(e)
-            return render_template('no-user-exist.html', text_message = "User not found", title= "User 404")
+            return render_template('no-user-exist.html', text_message="User not found", title="User 404")
 
 
 @app.route('/randomize-my-profile-picture', methods=['GET', 'POST'])
