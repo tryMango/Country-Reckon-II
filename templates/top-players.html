@@ -1,0 +1,51 @@
+{% extends "./base.html" %}
+
+{% block head %}
+{{ super() }}
+<title>Top 100</title>
+{% endblock %}
+
+
+{% block body %}
+{{ super() }}
+<body id="top-hundred-body">
+<button class="regularButton" onclick="location.href = '/'">Start Menu</button>
+<div id="top-hundred-box" class="transparent_box">
+    <label class="titleLabel">TOP 100</label><br><br>
+    <table>
+        <tr>
+            <td>#</td>
+            <td>Username</td>
+            <td>Average Score</td>
+            <td>Rounds Played</td>
+        </tr>
+        {% if usernames | length > 100 %}
+        <tr></tr>
+        {% for i in range(100) %}
+        <tr>
+            <td>{{i+1}}</td>
+            <td><a href="/user/{{ids[i]}}">{{usernames[i]}}</a></td>
+            <td>{{total_scores[i]}}</td>
+            <td></td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        {% for i in range(usernames|length) %}
+        {% if i < 1 %}
+        <tr id="playerNumberOne">
+            {% elif i >= 1 and i < 3 %}
+        <tr class="playersSecondThird">
+            {% else %}
+        <tr>
+            {% endif %}
+            <td>{{i+1}}</td>
+            <td><a href="/user/{{ids[i]}}">{{usernames[i]}}</a></td>
+            <td>{{total_scores[i]}}</td>
+            <td>{{total_rounds[i]}}</td>
+        </tr>
+        {% endfor %}
+        {% endif %}
+    </table>
+</div>
+</body>
+{% endblock %}

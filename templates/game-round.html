@@ -1,0 +1,55 @@
+{% extends "./base.html" %}
+
+{% block head %}
+{{ super() }}
+<title>Play!</title>
+{% endblock %}
+
+
+{% block body %}
+{{ super() }}
+<body id="game-body">
+<div id="game-header">
+    <button class="regularButton" onclick="location.href = '/settings'">Settings</button>
+    <output id="score-label">Score: {{session_data.total_score}}</output>
+    <div id="buttonsTogether">
+        <button class="regularButton" onclick="location.href = '/scoreboard'">Scoreboard</button>
+        <button class="regularButton" onclick="location.href = '/'">Return To Start Menu</button>
+    </div>
+</div>
+<div id="hints-box">
+    {% for hint in hints_to_display %}
+    {% if hint != None %}
+    {% if hint.endswith('svg') %}
+    <img src="{{hint}}">
+    {% else %}
+    <div>{{hint}}</div>
+    {% endif %}
+    {% endif %}
+    {% endfor %}
+</div>
+
+<div id="controls-box">
+    <form action="/game/{{session_data.id}}/round" method="post">
+        <input type="submit" name="hint-button" id="hint-button" class="regularButton" value="Hint">
+    </form>
+    <input type="text" id="searchThing" oninput="countryFinder(this.value)"
+           placeholder="Type country here to find it">
+
+    <button class="regularButton" onclick="popUpWindow('{{round_data.answer}}')">Answer</button>
+</div>
+
+<form action="/game/{{session_data.id}}/round" method="post" id="answer-form">
+    <div id="answers-box">
+        {% for country_name in country_names_list %}
+        <section id="{{country_name}}" onclick="checkTheBoxes({{settings_data.amount_of_guesses}}, this.id)">
+            <input type="checkbox" name="{{country_name}}" value="{{country_name}}" class="answer_checkbox"
+                   onchange="checkTheBoxes({{settings_data.amount_of_guesses}}, this.name)">
+            <label id="{{country_name}}" class="countryNames" >{{country_name}}</label>
+        </section>
+        {% endfor %}
+
+    </div>
+</form>
+</body>
+{% endblock %}

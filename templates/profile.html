@@ -1,0 +1,46 @@
+{% extends "./base.html" %}
+
+{% block head %}
+{{ super() }}
+<title>{{user_id}}</title>
+{% endblock %}
+
+
+{% block body %}
+{{ super() }}
+<body id="profile-body">
+<div>
+    <button class="regularButton" onclick="location.href = '/'">Start Menu</button>
+    <button class="regularButton" onclick="location.href = '/top-players'">TOP 100</button>
+</div>
+<div id="profile-box" class="transparent_box">
+    <div id="top">
+        <div id="profile-image">
+            {% for i in user_info.profile_code %}
+            {% if i == "1" %}
+            <div class="image-blocks"></div>
+            {% else %}
+            <div style="background: white" class="image-blocks"></div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% if current_user_id == user_info.id%}
+        <button id="randomizer" onclick="randomizeMyProfilePicture({{current_user_id}}, {{user_info.id}})">?</button>
+        {% endif %}
+        <section>
+            <label class="titleLabel">{{user_info.username}}</label>
+            <br>
+            ID: {{user_info.id}}
+        </section>
+
+    </div>
+
+    <div id="bottom">
+        Total score: {{user_info.total_score}}<br>
+        Total rounds: {{user_info.total_rounds}}<br>
+        Average score: {{user_info.avg_score}}<br>
+        Average hint usage: {{user_info.avg_hints_used}}<br>
+    </div>
+</div>
+</body>
+{% endblock %}

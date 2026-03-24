@@ -1,0 +1,36 @@
+{% extends "./base.html" %}
+
+{% block head %}
+{{ super() }}
+<title>Home</title>
+{% endblock %}
+
+
+{% block body %}
+{{ super() }}
+<body id="home-body">
+<button class="regularButton" onclick="location.href = '/top-players'">TOP 100</button>
+<div id="home-box">
+    <form action="" method="post">
+        <div id="sign-up-box" class="transparent_box">
+            <label class="titleLabel">Registration</label>
+            Username:
+            <input type="text" name="username" id="" required>
+            Password:
+            <input type="password" name="password" id="" required>
+            <input type="submit" value="Sign Up" class="regularButton" name="sign-up">
+        </div>
+    </form>
+    <form action="" method="post">
+        <div id="sign-in-box" class="transparent_box">
+            <label class="titleLabel">Login</label>
+            Username:
+            <input type="text" name="username" id="" required>
+            Password:
+            <input type="password" name="password" id="" required>
+            <input type="submit" value="Sign In" class="regularButton" name="sign-in">
+        </div>
+    </form>
+</div>
+</body>
+{% endblock %}

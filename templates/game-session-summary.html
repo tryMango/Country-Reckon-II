@@ -1,0 +1,31 @@
+{% extends "./base.html" %}
+
+{% block head %}
+{{ super() }}
+<title>Summary</title>
+{% endblock %}
+
+
+{% block body %}
+{{ super() }}
+<body id="summary-body">
+<div id="summary-box" class="transparent_box">
+    <label class="titleLabel">Summary</label>
+    <br>
+    <div id="dataBox">
+        Session {{session_data.id}}
+        <br>
+        Total score: {{session_data.total_score}}
+        <br>
+        Hints used: {{session_data.total_hints}}
+        <br>
+        Rounds: {{session_data.rounds}}
+    </div>
+    <button class="regularButton" onclick="location.href = '/'">Return To Start Menu</button>
+    <br>
+    <button class="regularButton" onclick="location.href = '/settings'">Settings</button>
+    <br>
+    <button class="regularButton" onclick="location.href = '/scoreboard'">Scoreboard</button>
+</div>
+</body>
+{% endblock %}

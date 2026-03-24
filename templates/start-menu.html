@@ -1,0 +1,57 @@
+{% extends "./base.html" %}
+
+{% block head %}
+{{ super() }}
+<title>Country Reckon</title>
+{% endblock %}
+
+
+{% block body %}
+{{ super() }}
+<body id="start-menu-body">
+<!--
+<div id="center-tester"></div>
+-->
+<video autoplay muted loop preload="metadata" name="background-video" id="background-video">
+    <source src="{{url_for('static', filename='background.webm')}}" type="video/webm">
+</video>
+
+<div id="start-header">
+    <div class="buttonsTogether">
+        <button class="regularButton" onclick="location.href = '/settings'">Settings</button>
+        <button class="regularButton" onclick="location.href = '/logout'">Logout</button>
+    </div>
+    <label>Your latest score: {% if latest_session_data.total_score %}{{latest_session_data.total_score}}{% else %}0{%
+        endif %}</label>
+    <div class="buttonsTogether">
+        <button class="regularButton" onclick="location.href = '/scoreboard'">Scoreboard</button>
+        <button class="regularButton" onclick="location.href = '/top-players'">TOP 100</button>
+    </div>
+</div>
+
+
+<div id="start-menu" class="transparent_box">
+    <form action="/" method="post">
+        <label for="guesses-range">Guesses </label>
+        <br>
+        <div class="setting">
+            <input type="range" name="guesses-range" id="guesses-range" class="range" onmouseup="notUsingRange()"
+                   onmousedown="usingRange()" oninput="inputRangePercentChange(this.value, 'guessesLabel')" min="1"
+                   max="{{max_guesses_amount}}" value="{{(settings_data.amount_of_guesses)|int}}">
+            <label id="guessesLabel">{{(settings_data.amount_of_guesses)|int}}</label>
+        </div>
+
+        <label for="rounds-range">Rounds </label>
+        <div class="setting">
+            <input type="range" name="rounds-range" id="rounds-range" class="range" onmouseup="notUsingRange()"
+                   onmousedown="usingRange()" oninput="inputRangePercentChange(this.value, 'roundsLabel')" min="1"
+                   max="{{max_rounds_amount}}" value="{{(settings_data.amount_of_rounds)|int}}">
+            <label id="roundsLabel">{{settings_data.amount_of_rounds}}</label>
+        </div>
+        <input type="submit" class="regularButton" name="play-button" value="Play">
+    </form>
+</div>
+<a href="/user/{{latest_session_data.user_id}}" id="username-label">{{username_id}}</a>
+</body>
+{% endblock %}
+

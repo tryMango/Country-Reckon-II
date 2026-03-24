@@ -1,0 +1,53 @@
+{% extends "./base.html" %}
+
+{% block head %}
+{{ super() }}
+<title>Scoreboard</title>
+{% endblock %}
+
+
+{% block body %}
+{{ super() }}
+<body id="scoreboard-body">
+<div id="scoreboard-box" class="transparent_box">
+    <label class="titleLabel">Scoreboard</label>
+    <br><br>
+    <table id="scoreboard-table">
+        {% if sessions_data | length > 0 %}
+        <tr>
+            <td>Session #</td>
+            <td>Score</td>
+            <td>Rounds</td>
+            <td>Hints used</td>
+            <td class="noBorder"></td>
+        </tr>
+        {% for session in sessions_data %}
+        <tr>
+            <td>{{session.id}}</td>
+            <td>{{session.total_score}}</td>
+            <td>{{session.rounds}}</td>
+            <td>{% if session.total_hints != '' %}{{session.total_hints}}{% else %}0{% endif %}</td>
+            <td class="noBorder">
+                <button class="summary-button" onclick="location.href='/game/{{session.id}}'">Check Summary</button>
+                <button class="delete-button" onclick="location.href='/remove-entry/{{session.id}}'">Delete Session
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        You haven't played a single game
+        {% endif %}
+    </table>
+    <br>
+    <button class="delete-button" id="clear-the-scoreboard" onclick="customAlertPopUp()">Clear The Scoreboard</button>
+    <br><br>
+
+    <button class="regularButton" onclick="location.href = '/'">Return To Start Menu</button>
+    <button class="regularButton" onclick="location.href = '/settings'">Settings</button>
+    <button class="regularButton" onclick="location.href = '/top-players'">TOP 100</button>
+</div>
+
+<script src='{{url_for("static", filename = "scripts.js")}}'></script>
+</body>
+{% endblock %}
+

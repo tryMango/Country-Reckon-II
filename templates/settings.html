@@ -1,0 +1,33 @@
+{% extends "./base.html" %}
+
+{% block head %}
+{{ super() }}
+<title>Settings</title>
+{% endblock %}
+
+
+{% block body %}
+{{ super() }}
+<body id="settings-body">
+<div id="settings-box" class="transparent_box">
+    <label class="titleLabel">Settings</label>
+    <br><br>
+    <form action="/settings" method="post">
+        Volume
+        <div class="setting">
+            <input type="range" name="volume-range" class="range" id="volume-range" min="0" max="100"
+                   value="{{volume}}" onmouseup="notUsingRange()" onmousedown="usingRange()"
+                   oninput="inputRangePercentChange(this.value, 'volumeLabel')">
+            <section>
+                <label id="volumeLabel">{% if volume %}{{volume}}{%else%}50{% endif %}</label>%
+            </section>
+        </div>
+        <input type="submit" class="regularButton" value="Save Settings" name="save-settings">
+        <br><br>
+    </form>
+    <button class="regularButton" onclick="location.href = '/'">Return To Start Menu</button>
+</div>
+
+<script src='{{url_for("static", filename = "scripts.js")}}'></script>
+</body>
+{% endblock %}

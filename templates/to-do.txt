@@ -1,0 +1,5 @@
+
+2. Show answer after answer button pressed {DONE}
+3. Try and optimize hint button {DONE}
+4. Fix checkboxes {DONE}
+5. Fix frontend {DONE}
