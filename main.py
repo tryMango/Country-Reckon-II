@@ -4,6 +4,7 @@ import random
 import requests
 from flask import Flask, render_template, request, redirect, flash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
+from sqlalchemy.testing.pickleable import User
 from sqlalchemy.util import NoneType
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
@@ -67,6 +68,7 @@ class Sessions(db.Model):
     total_score = db.Column(db.Integer, default=0)  # total score of a game session
     total_hints = db.Column(db.String(32), default='')  # total numerical amount of hints used in every round
     rounds = db.Column(db.Integer, default=0)
+    ended = db.Column(db.Boolean, default=False)
 
     round = db.relationship('Rounds', backref='Sessions')
 
@@ -249,6 +251,7 @@ def game(session_id):
             else:
                 current_user.total_score += Sessions.query.filter_by(user_id=current_user.id).order_by(
                     Sessions.id.desc()).first().total_score
+                session_data.ended = True
                 db.session.commit()
                 return redirect(f'/game/{session_id}')
         else:  # request.form.get('hint-button')
@@ -262,33 +265,50 @@ def game(session_id):
                 db.session.commit()
             return redirect(f'/game/{session_id}/round')
     else:
-        info_json = json.loads(requests.get(api_url + f'name/{round_data.answer}').text)
+        try:
+            if not session_data.ended:
+                info_json = json.loads(requests.get(api_url + f'name/{round_data.answer}').text)
 
-        hints_to_display = []
-        for hint_code in round_data.hints_used:
-            hint_string = get_hint_response(hint_code, info_json)
-            if hint_string != NoneType:
-                hints_to_display.append(hint_string)
+                hints_to_display = []
+                for hint_code in round_data.hints_used:
+                    hint_string = get_hint_response(hint_code, info_json)
+                    if hint_string != NoneType:
+                        hints_to_display.append(hint_string)
 
-        settings_data = {
-            'volume': current_user.volume,
-            'amount_of_guesses': current_user.amount_of_guesses,
-            'amount_of_rounds': current_user.amount_of_rounds
-        }
-        return render_template('game-round.html',
-                               round_data=round_data,
-                               hints_to_display=hints_to_display,
-                               session_data=session_data,
-                               country_names_list=country_names_list,
-                               settings_data=settings_data)
+                settings_data = {
+                    'volume': current_user.volume,
+                    'amount_of_guesses': current_user.amount_of_guesses,
+                    'amount_of_rounds': current_user.amount_of_rounds
+                }
+                return render_template('game-round.html',
+                                       round_data=round_data,
+                                       hints_to_display=hints_to_display,
+                                       session_data=session_data,
+                                       country_names_list=country_names_list,
+                                       settings_data=settings_data)
+            else:
+                return render_template('no-user-exist.html', text_message="Session ended", title="Session ended")
+        except Exception as e:
+            print(e)
+            return render_template('no-user-exist.html', text_message="No such session exists", title="No session")
 
 
 @app.route('/game/<int:session_id>', methods=['GET'])
 @login_required
 def session_summary(session_id):
-    session_data = Sessions.query.filter_by(id=session_id).first()
-    return render_template('game-session-summary.html',
-                           session_data=session_data)
+    if Sessions.query.filter_by(id=session_id).first():
+        session_data = Sessions.query.filter_by(id=session_id).first()
+        username = Users.query.filter_by(id=session_data.user_id).first().username
+        return render_template('game-session-summary.html',
+                               session_data=session_data,
+                               username=username)
+    else:
+        return render_template('no-user-exist.html', text_message = "No such session exists", title= "No session")
+
+@app.errorhandler(404)
+def page_not_found(e):
+    print(e)
+    return render_template('no-user-exist.html', text_message="404 Not Found", title="404 Not Found")
 
 
 @app.route('/settings', methods=['GET', 'POST'])
@@ -394,7 +414,7 @@ def user_profile(user_id):
                                    current_user_id=current_user.id)
         except Exception as e:
             print(e)
-            return render_template('no-user-exist.html')
+            return render_template('no-user-exist.html', text_message = "User not found", title= "User 404")
 
 
 @app.route('/randomize-my-profile-picture', methods=['GET', 'POST'])

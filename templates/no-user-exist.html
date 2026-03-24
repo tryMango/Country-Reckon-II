@@ -2,13 +2,13 @@
 
 {% block head %}
 {{ super() }}
-<title>No User</title>
+<title>{{title}}</title>
 {% endblock %}
 
 
 {% block body %}
 {{ super() }}
 <body id="no-user-body">
-<label class="titleLabel">No user exists with this ID</label>
+<label class="titleLabel">{{text_message}}</label>
 </body>
 {% endblock %}
