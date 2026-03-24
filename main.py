@@ -217,7 +217,7 @@ def start_menu():
                                settings_data=settings_data,
                                max_rounds_amount=max_rounds_amount,
                                max_guesses_amount=max_guesses_amount,
-                               username_id=username_id)
+                               username_id=username_id234234234)
 
 
 @app.route('/game/<int:session_id>/round', methods=['GET', 'POST'])
