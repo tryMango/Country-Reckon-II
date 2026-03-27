@@ -26,11 +26,7 @@ function countryFinder(text) {
 }
 
 function checkTheBoxes(maxAmount, name) {
-    if (document.getElementsByName(name)[0].checked) {
-        document.getElementsByName(name)[0].checked = false
-    } else {
-        document.getElementsByName(name)[0].checked = true
-    }
+    document.getElementsByName(name)[0].checked = !document.getElementsByName(name)[0].checked;
 
     let checkedBoxes = []
     let checkboxes = document.getElementsByClassName('answer_checkbox')

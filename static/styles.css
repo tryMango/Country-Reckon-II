@@ -115,6 +115,7 @@ body#start-menu-body div#start-header button {
 }
 body#start-menu-body div#start-menu {
   margin-top: 55vh;
+  width: 15vw;
 }
 body#start-menu-body div#start-menu input[type=range] {
   width: 85%;

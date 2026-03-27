@@ -266,32 +266,36 @@ def game(session_id):
                 db.session.commit()
             return redirect(f'/game/{session_id}/round')
     else:
-        try:
-            if not session_data.ended:
-                info_json = json.loads(requests.get(api_url + f'name/{round_data.answer}').text)
+        if Sessions.query.filter_by(id=session_id).first():
+            try:
+                if not session_data.ended:
 
-                hints_to_display = []
-                for hint_code in round_data.hints_used:
-                    hint_string = get_hint_response(hint_code, info_json)
-                    if hint_string != NoneType:
-                        hints_to_display.append(hint_string)
+                    info_json = json.loads(requests.get(api_url + f'name/{round_data.answer}').text)
 
-                settings_data = {
-                    'volume': current_user.volume,
-                    'amount_of_guesses': current_user.amount_of_guesses,
-                    'amount_of_rounds': current_user.amount_of_rounds
-                }
-                return render_template('game-round.html',
-                                       round_data=round_data,
-                                       hints_to_display=hints_to_display,
-                                       session_data=session_data,
-                                       country_names_list=country_names_list,
-                                       settings_data=settings_data)
-            else:
-                return render_template('no-user-exist.html', text_message="Session ended", title="Session ended")
-        except Exception as e:
-            print(e)
-            return render_template('no-user-exist.html', text_message="No such session exists", title="No session")
+                    hints_to_display = []
+                    for hint_code in round_data.hints_used:
+                        hint_string = get_hint_response(hint_code, info_json)
+                        if hint_string != NoneType:
+                            hints_to_display.append(hint_string)
+
+                    settings_data = {
+                        'volume': current_user.volume,
+                        'amount_of_guesses': current_user.amount_of_guesses,
+                        'amount_of_rounds': current_user.amount_of_rounds
+                    }
+                    return render_template('game-round.html',
+                                           round_data=round_data,
+                                           hints_to_display=hints_to_display,
+                                           session_data=session_data,
+                                           country_names_list=country_names_list,
+                                           settings_data=settings_data)
+
+                else:
+                    return render_template('not-found.html', text_message="Session ended", title="Session ended")
+            except Exception as e:
+                print(e)
+        else:
+            return render_template('not-found.html', text_message="No such session exists", title="No session")
 
 
 @app.route('/game/<int:session_id>', methods=['GET'])
@@ -304,13 +308,13 @@ def session_summary(session_id):
                                session_data=session_data,
                                username=username)
     else:
-        return render_template('no-user-exist.html', text_message="No such session exists", title="No session")
+        return render_template('not-found.html', text_message="No such session exists", title="No session")
 
 
 @app.errorhandler(404)
 def page_not_found(e):
     print(e)
-    return render_template('no-user-exist.html', text_message="404 Not Found", title="404 Not Found")
+    return render_template('not-found.html', text_message="404 Not Found", title="404 Not Found")
 
 
 @app.route('/settings', methods=['GET', 'POST'])
@@ -415,14 +419,14 @@ def user_profile(user_id):
             if AnonymousUserMixin:
                 return render_template('profile.html',
                                        user_info=user_info,
-                                       current_user_id=0)
+                                       current_user_id=current_user.id)
             else:
                 return render_template('profile.html',
                                        user_info=user_info,
                                        current_user_id=current_user.id)
         except Exception as e:
             print(e)
-            return render_template('no-user-exist.html', text_message="User not found", title="User 404")
+            return render_template('not-found.html', text_message="User not found", title="User 404")
 
 
 @app.route('/randomize-my-profile-picture', methods=['GET', 'POST'])
